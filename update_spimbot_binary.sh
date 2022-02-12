@@ -11,7 +11,7 @@ DEST_PATH=~/.local/bin/QtSpimbot
 if [ $ARGC -ne 2 ]; then
     echo "Invalid usage, exiting..."
     echo "Usage: ./update_spimbot_binary.sh <path to spimbot_binaries repo> <binary version>"
-    echo "Example: ./update_spimbot_binary.sh ~/.spimbot/spimbot_binares linux_x86_64"
+    echo "Example: ./update_spimbot_binary.sh ~/.spimbot/spimbot_binaries linux_x86_64"
     exit 1
 fi;
 
