@@ -27,12 +27,14 @@ fi;
 
 pushd $REPO_DIR > /dev/null
 
+git remote update > /dev/null
 commitdiff=$(git rev-list HEAD...origin/main --count)
 
 if [ $commitdiff -gt 0 ]; then
     echo "New remote commit detected, pulling + installing..."
     git checkout main && git pull
     cp $BINARY_VERSION/QtSpimbot $DEST_PATH
+    echo "Installed new binary"
 fi;
 
 popd > /dev/null
