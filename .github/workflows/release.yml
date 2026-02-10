@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'spimbot_release/**'
+  workflow_dispatch:
 
 jobs:
   release:
@@ -21,12 +22,12 @@ jobs:
 
       - name: Generate release tag
         id: tag
-        run: echo "tag=release-sp26-$(date +'%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
+        run: echo "tag=sp26-$(date +'%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
-          name: SpimBot Release ${{ steps.tag.outputs.tag }}
+          name: spimbot release ${{ steps.tag.outputs.tag }}
           files: spimbot_release.zip
           generate_release_notes: true
