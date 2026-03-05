@@ -56,12 +56,6 @@ main:
 
     # YOUR CODE GOES HERE!!!!!!
 
-
-
-
-    # END YOUR CODE SECTION 
-
-
 # Once done, enter an infinite loop so that your bot can be graded by QtSpimbot once 10,000,000 cycles have elapsed
 loop:
         j       loop
