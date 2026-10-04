@@ -11,27 +11,12 @@ VELOCITY                = 0xffff0010
 BOT_X                   = 0xffff0020
 BOT_Y                   = 0xffff0024
 
-NUM_CARROTS             = 0xffff0040
-NUM_BUNNIES_CARRIED     = 0xffff0050
-
-SEARCH_BUNNIES          = 0xffff0054
-CATCH_BUNNY             = 0xffff0058
-PUT_BUNNIES_IN_PLAYPEN  = 0xffff005c
-
-PLAYPEN_LOCATION        = 0xffff0044
-
-SCORES_REQUEST          = 0xffff1018
-
 TIMER                   = 0xffff001c
 
 BONK_INT_MASK           = 0x1000      ## Bonk
 BONK_ACK                = 0xffff0060  ## Bonk
 TIMER_INT_MASK          = 0x8000      ## Timer
 TIMER_ACK               = 0xffff006c  ## Timer
-EX_CARRY_LIMIT_INT_MASK = 0x4000      ## Exceeding Carry Limit
-EX_CARRY_LIMIT_ACK      = 0xffff002c  ## Exceeding Carry Limit
-
-MMIO_STATUS             = 0xffff204c
 
 .data
 
@@ -66,41 +51,42 @@ main:
 
 # Once done, enter an infinite loop so that your bot can be graded by QtSpimbot once 10,000,000 cycles have elapsed
 loop:
-        j       loop
+    j       loop
 
 print_xy:
-  # this syscall takes $a0 as an argument of what INT to print
-  li	$v0, PRINT_INT
-        syscall
+    # this syscall takes $a0 as an argument of what INT to print
+    li      $v0, PRINT_INT
+    syscall
 
-  li	$a0, 32		#space
-  li	$v0, PRINT_CHAR
-        syscall
+    li      $a0, 32                 # space
+    li      $v0, PRINT_CHAR
+    syscall
 
-  move	$a0, $a1
-  li	$v0, PRINT_INT
-        syscall
-  
-  li	$a0, 13		#return
-  li	$v0, PRINT_CHAR
-        syscall
-  
-  jr	$ra
+    move    $a0, $a1
+    li      $v0, PRINT_INT
+    syscall
+
+    li      $a0, 13                 # return
+    li      $v0, PRINT_CHAR
+    syscall
+
+    jr      $ra
 
 # ======================== kernel code ================================
 .kdata
-chunkIH:    .space 40
-non_intrpt_str:    .asciiz "Non-interrupt exception\n"
+chunkIH:          .space 40
+non_intrpt_str:   .asciiz "Non-interrupt exception\n"
 unhandled_str:    .asciiz "Unhandled interrupt type\n"
+
 .ktext 0x80000180
 interrupt_handler:
 .set noat
-    move    $k1, $at        # Save $at
-                            # NOTE: Don't touch $k1 or else you destroy $at!
+    move    $k1, $at                # Save $at
+                                    # NOTE: Don't touch $k1 or else you destroy $at!
 .set at
     la      $k0, chunkIH
-    sw      $a0, 0($k0)        # Get some free registers
-    sw      $v0, 4($k0)        # by storing them to a global variable
+    sw      $a0, 0($k0)             # Get some free registers
+    sw      $v0, 4($k0)             # by storing them to a global variable
     sw      $t0, 8($k0)
     sw      $t1, 12($k0)
     sw      $t2, 16($k0)
@@ -121,15 +107,14 @@ interrupt_handler:
     and     $a0, $a0, 0xf           # ExcCode field
     bne     $a0, 0, non_intrpt
 
-
-interrupt_dispatch:                 # Interrupt:
+interrupt_dispatch:
     mfc0    $k0, $13                # Get Cause register, again
     beq     $k0, 0, done            # handled all outstanding interrupts
 
-    and     $a0, $k0, BONK_INT_MASK     # is there a bonk interrupt?
+    and     $a0, $k0, BONK_INT_MASK # is there a bonk interrupt?
     bne     $a0, 0, bonk_interrupt
 
-    and     $a0, $k0, TIMER_INT_MASK    # is there a timer interrupt?
+    and     $a0, $k0, TIMER_INT_MASK # is there a timer interrupt?
     bne     $a0, 0, timer_interrupt
 
     li      $v0, PRINT_STRING       # Unhandled interrupt types
@@ -139,26 +124,26 @@ interrupt_dispatch:                 # Interrupt:
 
 bonk_interrupt:
     sw      $0, BONK_ACK
-    #Fill in your bonk handler code here
-    j       interrupt_dispatch      # see if other interrupts are waiting
+    # Fill in your bonk handler code here
+    j       interrupt_dispatch     # see if other interrupts are waiting
 
 timer_interrupt:
     sw      $0, TIMER_ACK
-    #Fill in your timer interrupt code here
-    li	    $t0, 1
-    sb	    $t0, has_timer	
-    j       interrupt_dispatch      # see if other interrupts are waiting
+    # Fill in your timer interrupt code here
+    li      $t0, 1
+    sb      $t0, has_timer
+    j       interrupt_dispatch     # see if other interrupts are waiting
 
-non_intrpt:                         # was some non-interrupt
+non_intrpt:
     li      $v0, PRINT_STRING
     la      $a0, non_intrpt_str
-    syscall                         # print out an error message
+    syscall                        # print out an error message
     # fall through to done
-    
+
 done:
     la      $k0, chunkIH
 
-    # Restore coprocessor1 registers!
+    # Save coprocessor1 registers!
     # If you don't do this and you decide to use division or multiplication
     #   in your main code, and interrupt handler code, you get WEIRD bugs.
     lw      $t0, 32($k0)
@@ -176,6 +161,6 @@ done:
     lw      $t5, 28($k0)
 
 .set noat
-    move    $at, $k1        # Restore $at
+    move    $at, $k1                # Restore $at
 .set at
     eret
