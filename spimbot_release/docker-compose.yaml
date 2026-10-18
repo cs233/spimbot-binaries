@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/config/Desktop/shared
     ports:
-      - 3000:3000
-      - 3001:3001
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:3001:3001"
     shm_size: "1gb"
     restart: unless-stopped
