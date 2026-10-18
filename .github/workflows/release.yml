@@ -22,7 +22,7 @@ jobs:
 
       - name: Generate release tag
         id: tag
-        run: echo "tag=sp26-$(date +'%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
+        run: echo "tag=fa26-$(date +'%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
