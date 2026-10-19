@@ -1,7 +1,7 @@
 ### syscall constants
 PRINT_STRING                        = 4
 PRINT_CHAR                          = 11
-PRINT_INT_SYSCALL                   = 1
+PRINT_INT                           = 1
 
 ### MMIO addresses
 VELOCITY                            = 0xffff0010
@@ -22,7 +22,6 @@ LAST_CLAIMED_TILES                  = 0xffff00cc
 SCORES_REQUEST                      = 0xffff1018
 
 MMIO_STATUS                         = 0xffff204c
-PRINT_INT                           = 0xffff0080
 PRINT_HEX                           = 0xffff0088
 PRINT_FLOAT                         = 0xffff0084
 
